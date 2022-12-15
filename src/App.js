@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+
+import CardList from "./components/CardList";
+import SearchBar from "./components/SearchBar";
+
+import ApiSource from "./api/ApiSource";
+// import { ApiKey } from "./api/Api-info";
 
 function App() {
+  const [movieData, setMovieData] = useState({
+    results: [],
+  });
+
+  const onSearch = async (text) => {
+    const results = await ApiSource.get("/", {
+      params: { s: text, i: "tt3896198", apiKey: "2c4f2885" },
+    });
+
+    setMovieData((prevState) => {
+      return { ...prevState, results: results };
+    });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+      <div className="container movieSearchApp">
+        <a class="navbar-link" href="/">
+          <img
+            className="nav--img"
+            src="https://media1.giphy.com/media/TGKn4dC1ZD6EMwE21o/giphy.gif?cid=ecf05e47d6alx9hgf9i58vxx5fk5j9bz7ivplcs7i1obdqx8&rid=giphy.gif&ct=s"
+            alt="search-img"
+          />
         </a>
-      </header>
+        <h2 className="title is-2 has-text-centered">Movie Searcer App</h2>
+        <SearchBar onSearch={onSearch} />
+        <CardList results={movieData.results} />
+      </div>
     </div>
   );
 }
